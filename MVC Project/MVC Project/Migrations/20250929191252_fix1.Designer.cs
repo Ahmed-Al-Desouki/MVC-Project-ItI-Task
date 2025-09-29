@@ -3,6 +3,7 @@ using MVC_Project.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVC_Project.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20250929191252_fix1")]
+    partial class fix1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,15 +89,17 @@ namespace MVC_Project.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ManagerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ManagerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ManagerId")
+                        .IsUnique();
 
                     b.ToTable("Departments");
                 });
@@ -131,8 +136,6 @@ namespace MVC_Project.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
-
-                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Instractors");
                 });
@@ -196,6 +199,17 @@ namespace MVC_Project.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("MVC_Project.Models.Department", b =>
+                {
+                    b.HasOne("MVC_Project.Models.Instractor", "Manager")
+                        .WithOne("Department")
+                        .HasForeignKey("MVC_Project.Models.Department", "ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Manager");
+                });
+
             modelBuilder.Entity("MVC_Project.Models.Instractor", b =>
                 {
                     b.HasOne("MVC_Project.Models.Course", "Course")
@@ -204,15 +218,7 @@ namespace MVC_Project.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MVC_Project.Models.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Course");
-
-                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("MVC_Project.Models.Student", b =>
@@ -224,6 +230,12 @@ namespace MVC_Project.Migrations
                         .IsRequired();
 
                     b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("MVC_Project.Models.Instractor", b =>
+                {
+                    b.Navigation("Department")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
