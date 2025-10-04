@@ -2,7 +2,157 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+
+    <section class="story-section py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="story-card card border-0 shadow-lg mb-4 animate__animated animate__fadeInUp">
+                        <div class="card-body p-5">
+                            <h2 class="card-title text-center mb-4" style="color: #6366f1; font-weight: bold;">
+                                <i class="fas fa-book-open me-2"></i>Chapter 1: The Beginning of Knowledge
+                            </h2>
+                            <p class="text-center fs-5" style="line-height: 1.8; color: #1e293b;">
+                                In the quiet halls of academia, where dreams take root and ideas bloom, MVC Project was born. A digital sanctuary where brilliant instructors share their wisdom, eager students absorb the light of knowledge, and courses weave the threads of destiny.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="story-card card border-0 shadow-lg mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                        <div class="card-body p-5">
+                            <h2 class="card-title text-center mb-4" style="color: #10b981; font-weight: bold;">
+                                <i class="fas fa-users me-2"></i>Chapter 2: The Community of Learners
+                            </h2>
+                            <p class="text-center fs-5" style="line-height: 1.8; color: #1e293b;">
+                                Here, departments stand as pillars of excellence, guiding the journey of discovery. Each connection between course and student is a spark, igniting passions and unlocking potentials. It's not just a system—it's a living ecosystem of growth and inspiration.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="story-card card border-0 shadow-lg mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+                        <div class="card-body p-5">
+                            <h2 class="card-title text-center mb-4" style="color: #f59e0b; font-weight: bold;">
+                                <i class="fas fa-star me-2"></i>Chapter 3: The Future Awaits
+                            </h2>
+                            <p class="text-center fs-5" style="line-height: 1.8; color: #1e293b;">
+                                With seamless management and elegant design, MVC Project transforms education into an art form. From the first lesson to the final graduation, we craft stories of success, one click at a time. Join us in shaping tomorrow's leaders today.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section text-center py-5 bg-light">
+        <div class="container">
+            <h2 class="display-5 mb-4 animate__animated animate__zoomIn" style="color: #6366f1;">
+                <i class="fas fa-rocket me-2"></i>Ready to Begin Your Journey?
+            </h2>
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-3">
+                    <a asp-controller="Instructors" asp-action="Index" class="btn btn-primary btn-lg me-3 animate__animated animate__pulse">
+                        <i class="fas fa-chalkboard-teacher me-2"></i>Explore Instructors
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a asp-controller="Students" asp-action="Index" class="btn btn-success btn-lg me-3 animate__animated animate__pulse" style="animation-delay: 0.2s;">
+                        <i class="fas fa-user-graduate me-2"></i>Discover Students
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
+
+<style>
+    .floating-shapes {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .shape-1 {
+        width: 60px;
+        height: 60px;
+        top: 20%;
+        left: 10%;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .shape-2 {
+        width: 40px;
+        height: 40px;
+        top: 60%;
+        right: 20%;
+        animation: float 8s ease-in-out infinite reverse;
+        animation-delay: 2s;
+    }
+
+    .shape-3 {
+        width: 80px;
+        height: 80px;
+        bottom: 20%;
+        left: 70%;
+        animation: float 10s ease-in-out infinite;
+        animation-delay: 4s;
+    }
+
+    keyframes float {
+        0%, 100%
+
+    {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-20px) rotate(180deg);
+    }
+
+    }
+
+    .story-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-left: 5px solid #6366f1;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .story-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+    .cta-section {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border-radius: 20px;
+        margin: 3rem 0;
+        padding: 3rem 0;
+    }
+
+    .btn-lg {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        border-radius: 50px;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+    }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+</style>

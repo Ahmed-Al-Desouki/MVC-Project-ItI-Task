@@ -1,29 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
+using MVC_Project.Interfaces;
+using MVC_Project.Models;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace MVC_Project.Controllers
 {
     public class DepartmentsController : Controller
     {
-        private readonly Context _context;
+        private readonly IDepartmentService _departmentService;
+        private readonly ILogger<DepartmentsController> _logger;
 
-        public DepartmentsController(Context context)
+        public DepartmentsController(IDepartmentService departmentService, ILogger<DepartmentsController> logger)
         {
-            _context = context;
+            _departmentService = departmentService;
+            _logger = logger;
         }
 
-        // GET: Departments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Departments.ToListAsync());
+            var departments = await _departmentService.GetAllAsync();
+            return View(departments);
         }
 
-        // GET: Departments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -31,8 +30,7 @@ namespace MVC_Project.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var department = await _departmentService.GetByIdAsync(id.Value);
             if (department == null)
             {
                 return NotFound();
@@ -41,29 +39,57 @@ namespace MVC_Project.Controllers
             return View(department);
         }
 
-        // GET: Departments/Create
         public IActionResult Create()
         {
+            ViewData["ValidationErrors"] = "";
             return View();
         }
 
-        // POST: Departments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ManagerName")] Department department)
+        public async Task<IActionResult> Create([Bind("Name,ManagerName")] Department department)
         {
-            if (ModelState.IsValid)
+            _logger.LogInformation("Create attempt: Name={Name}", department.Name);
+
+            if (!ModelState.IsValid)
             {
-                _context.Add(department);
-                await _context.SaveChangesAsync();
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                _logger.LogWarning("ModelState is invalid. Errors: {Errors}", string.Join("; ", errors));
+                ViewData["ValidationErrors"] = string.Join("<br>", errors);
+                return View(department);
+            }
+
+            try
+            {
+                await _departmentService.AddAsync(department);
+                if (department.Id == 0)
+                {
+                    throw new InvalidOperationException("Department ID was not assigned after save.");
+                }
+                _logger.LogInformation("Department created successfully with ID: {Id}", department.Id);
                 return RedirectToAction(nameof(Index));
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Database update error: {Message}", ex.InnerException?.Message);
+                ModelState.AddModelError("", "Database error: Unable to save. Details: " + ex.InnerException?.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Save operation failed: {Message}", ex.Message);
+                ModelState.AddModelError("", "Save failed: " + ex.Message + ". Please try again.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error: {Message}", ex.Message);
+                ModelState.AddModelError("", "An unexpected error occurred. Try again. Details: " + ex.Message);
+            }
+
+            var modelErrors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            ViewData["ValidationErrors"] = string.Join("<br>", modelErrors);
             return View(department);
         }
 
-        // GET: Departments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -71,17 +97,15 @@ namespace MVC_Project.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments.FindAsync(id);
+            var department = await _departmentService.GetByIdAsync(id.Value);
             if (department == null)
             {
                 return NotFound();
             }
+            ViewData["ValidationErrors"] = "";
             return View(department);
         }
 
-        // POST: Departments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ManagerName")] Department department)
@@ -91,30 +115,43 @@ namespace MVC_Project.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            _logger.LogInformation("Edit attempt: ID={Id}, Name={Name}", department.Id, department.Name);
+
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(department);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DepartmentExists(department.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                _logger.LogWarning("ModelState is invalid. Errors: {Errors}", string.Join("; ", errors));
+                ViewData["ValidationErrors"] = string.Join("<br>", errors);
+                return View(department);
+            }
+
+            try
+            {
+                await _departmentService.UpdateAsync(department);
+                _logger.LogInformation("Department updated successfully with ID: {Id}", department.Id);
                 return RedirectToAction(nameof(Index));
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                _logger.LogError("DbUpdateConcurrencyException occurred");
+                ModelState.AddModelError("", "Unable to save changes. The department was deleted by another user.");
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Database update error: {Message}", ex.InnerException?.Message);
+                ModelState.AddModelError("", "Database error: Unable to save. Details: " + ex.InnerException?.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error: {Message}", ex.Message);
+                ModelState.AddModelError("", "An unexpected error occurred. Try again. Details: " + ex.Message);
+            }
+
+            var modelErrors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            ViewData["ValidationErrors"] = string.Join("<br>", modelErrors);
             return View(department);
         }
 
-        // GET: Departments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -122,34 +159,31 @@ namespace MVC_Project.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var department = await _departmentService.GetByIdAsync(id.Value);
             if (department == null)
             {
                 return NotFound();
             }
 
+            ViewData["ValidationErrors"] = "";
             return View(department);
         }
 
-        // POST: Departments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var department = await _context.Departments.FindAsync(id);
-            if (department != null)
+            try
             {
-                _context.Departments.Remove(department);
+                await _departmentService.DeleteAsync(id);
+                _logger.LogInformation("Department deleted successfully with ID: {Id}", id);
             }
-
-            await _context.SaveChangesAsync();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting department: {Message}", ex.Message);
+                ModelState.AddModelError("", "Unable to delete. Try again. Details: " + ex.Message);
+            }
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool DepartmentExists(int id)
-        {
-            return _context.Departments.Any(e => e.Id == id);
         }
     }
 }

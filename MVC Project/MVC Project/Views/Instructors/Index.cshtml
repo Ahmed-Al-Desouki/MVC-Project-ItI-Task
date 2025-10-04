@@ -1,0 +1,85 @@
+﻿@model IEnumerable<MVC_Project.Models.Instructor>
+
+@{
+    ViewData["Title"] = "Instructors List";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.css" rel="stylesheet">
+
+<style>
+    body {
+        background-color: #f8f9fa; /* Soft light gray for eye comfort */
+        color: #333; /* Dark text for readability */
+    }
+
+    .instructor-card {
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        overflow: hidden;
+        background-color: #ffffff; /* White background for cards */
+    }
+
+        .instructor-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card-title {
+        color: #007bff; /* Soft blue for titles */
+    }
+
+    .btn-primary {
+        background-color: #28a745; /* Soft green for create button */
+        border: none;
+    }
+
+    .btn-info {
+        background-color: #17a2b8; /* Teal for details */
+    }
+
+    .btn-warning {
+        background-color: #ffc107; /* Yellow for edit */
+    }
+
+    .btn-danger {
+        background-color: #dc3545; /* Red for delete */
+    }
+</style>
+
+<h1 class="text-center mb-4 animate__animated animate__fadeIn">Instructors</h1>
+
+<div class="text-end mb-3">
+    <a asp-action="Create" class="btn btn-primary animate__animated animate__bounceIn">Create New Instructor</a>
+</div>
+
+<div class="row">
+    @foreach (var instructor in Model)
+    {
+        <div class="col-md-4 mb-4 animate__animated animate__fadeInUp">
+            <div class="card instructor-card">
+                <img src="/images/@instructor.Image" class="card-img-top" alt="Instructor Image" />
+                <div class="card-body">
+                    <h5 class="card-title">@instructor.Name</h5>
+                    <p class="card-text">
+                        <strong>Address:</strong> @instructor.Address<br />
+                        <strong>Salary:</strong> @instructor.Salary<br />
+                        <strong>Department:</strong> @instructor.Department?.Name<br />
+                        <strong>Course:</strong> @instructor.Course?.Name
+                    </p>
+                    <a asp-action="Details" asp-route-id="@instructor.Id" class="btn btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@instructor.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@instructor.Id" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

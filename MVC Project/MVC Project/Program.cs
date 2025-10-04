@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using MVC_Project.Interfaces;
 using MVC_Project.Models;
+using MVC_Project.Services;
 
 namespace MVC_Project
 {
@@ -19,8 +21,11 @@ namespace MVC_Project
             builder.Services.AddDbContext<Context>(options =>
                 options.UseSqlServer(connectionString));
 
-            builder.Services.AddDbContext<Context>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IInstructorService, InstructorService>();
+            builder.Services.AddScoped<ICourseStudentsService, CourseStudentsService>();
+            builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+            builder.Services.AddScoped<ICourseService, CourseService>();
+            builder.Services.AddScoped<IStudentService, StudentService>();
 
             var app = builder.Build();
 

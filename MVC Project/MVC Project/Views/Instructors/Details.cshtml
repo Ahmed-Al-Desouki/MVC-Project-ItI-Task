@@ -1,0 +1,58 @@
+﻿@model MVC_Project.Models.Instructor
+
+@{
+    ViewData["Title"] = "Instructor Details";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.css" rel="stylesheet">
+
+<style>
+    body {
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    .details-card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        background-color: #ffffff;
+        max-width: 400px;
+    }
+
+    .card-img-top {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 20px auto;
+        transition: transform 0.3s ease;
+    }
+
+        .card-img-top:hover {
+            transform: rotate(5deg);
+        }
+
+    .card-title {
+        color: #17a2b8; /* Teal for title */
+    }
+</style>
+
+<h1 class="text-center mb-4 animate__animated animate__fadeIn">Instructor Details</h1>
+
+<div class="card details-card mx-auto animate__animated animate__zoomIn">
+    <img src="/images/@Model.Image" class="card-img-top" alt="Instructor Image" />
+    <div class="card-body text-center">
+        <h5 class="card-title">@Model.Name</h5>
+        <p class="card-text">
+            <strong>Address:</strong> @Model.Address<br />
+            <strong>Salary:</strong> @Model.Salary<br />
+            <strong>Department:</strong> @Model.Department.Name<br />
+            <strong>Course:</strong> @Model.Course.Name
+        </p>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,44 +1,121 @@
 ﻿@model MVC_Project.Models.CourseStudents
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Course Students";
 }
 
-<h1>Edit</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
 
-<h4>CourseStudents</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+<style>
+    body {
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+        transition: all 0.3s ease;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .alert-danger {
+        margin-bottom: 1rem;
+    }
+</style>
+
+<h1 class="text-center mb-4 animate__animated animate__fadeIn">Edit Course Students</h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        @if (!string.IsNullOrEmpty(ViewData["ValidationErrors"]?.ToString()))
+        {
+            <div class="alert alert-danger" role="alert">
+                @Html.Raw(ViewData["ValidationErrors"])
+            </div>
+        }
+        <form asp-action="Edit" asp-controller="CourseStudents" method="post" class="animate__animated animate__zoomIn">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Id" name="Id" />
             <div class="form-group">
                 <label asp-for="Degree" class="control-label"></label>
-                <input asp-for="Degree" class="form-control" />
+                <input asp-for="Degree" class="form-control" name="Degree" />
                 <span asp-validation-for="Degree" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CourseId" class="control-label"></label>
-                <select asp-for="CourseId" class="form-control" asp-items="ViewBag.CourseId"></select>
+                <select asp-for="CourseId" class="form-control" name="CourseId" asp-items="@ViewData["CourseId"] as SelectList" required>
+                    <option value="" disabled>Select a course</option>
+                </select>
                 <span asp-validation-for="CourseId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="StudentId" class="control-label"></label>
-                <select asp-for="StudentId" class="form-control" asp-items="ViewBag.StudentId"></select>
+                <select asp-for="StudentId" class="form-control" name="StudentId" asp-items="@ViewData["StudentId"] as SelectList" required>
+                    <option value="" disabled>Select a student</option>
+                </select>
                 <span asp-validation-for="StudentId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-group text-center">
+                <input type="submit" value="Save" class="btn btn-primary" id="submitButton" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="text-center mt-3">
+    <a asp-action="Index" asp-controller="CourseStudents">Back to List</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        (function () {
+            const form = document.querySelector("form");
+            const submitButton = document.querySelector("#submitButton");
+            const courseIdSelect = document.querySelector("#CourseId");
+            const studentIdSelect = document.querySelector("#StudentId");
+
+            // Disable submit button if no valid selection
+            function updateSubmitButton() {
+                const courseId = courseIdSelect.value;
+                const studentId = studentIdSelect.value;
+                submitButton.disabled = !courseId || courseId === "" || !studentId || studentId === "";
+                console.log("CourseId:", courseId, "StudentId:", studentId, "SubmitButton Disabled:", submitButton.disabled);
+            }
+
+            // Run on page load and on change
+            courseIdSelect.addEventListener("change", updateSubmitButton);
+            studentIdSelect.addEventListener("change", updateSubmitButton);
+            window.addEventListener("load", updateSubmitButton);
+
+            // Form submission validation
+            form.addEventListener("submit", function (e) {
+                const courseId = courseIdSelect.value;
+                const studentId = studentIdSelect.value;
+                if (!courseId || courseId === "" || !studentId || studentId === "") {
+                    e.preventDefault();
+                    alert("Please select a valid Course and Student.");
+                    console.log("Form submission prevented: CourseId=", courseId, "StudentId=", studentId);
+                }
+            });
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 }

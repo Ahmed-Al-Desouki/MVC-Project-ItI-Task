@@ -1,31 +1,32 @@
-﻿namespace MVC_Project.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace MVC_Project.Models
 {
     public class Context : DbContext
     {
         public Context(DbContextOptions<Context> options) : base(options) { }
-        public DbSet<Course> Courses { set; get;}
-        public DbSet<Student> Students { set; get; }
-        public DbSet<Department> Departments { set; get; }
-        public DbSet<Instractor> Instractors { set; get; }
-        public DbSet<CourseStudents> CourseStudents { set; get; }
 
-
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Instructor> Instructors { get; set; }
+        public DbSet<CourseStudents> CourseStudents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // تحديد الدقة والمقياس للخصائص من نوع decimal
+            // Setting precision and scale for decimal properties
             modelBuilder.Entity<Course>()
                 .Property(c => c.Degree)
-                .HasColumnType("decimal(18,2)"); // 18 رقم إجمالي، 2 بعد الفاصلة
+                .HasColumnType("decimal(18,2)");
             modelBuilder.Entity<Course>()
                 .Property(c => c.MinimumDegree)
                 .HasColumnType("decimal(18,2)");
             modelBuilder.Entity<CourseStudents>()
                 .Property(cs => cs.Degree)
                 .HasColumnType("decimal(18,2)");
-            modelBuilder.Entity<Instractor>()
+            modelBuilder.Entity<Instructor>()
                 .Property(i => i.Salary)
                 .HasColumnType("decimal(18,2)");
             modelBuilder.Entity<Student>()

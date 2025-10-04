@@ -43,7 +43,8 @@ namespace MVC_Project.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -88,18 +89,20 @@ namespace MVC_Project.Migrations
 
                     b.Property<string>("ManagerName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Departments");
                 });
 
-            modelBuilder.Entity("MVC_Project.Models.Instractor", b =>
+            modelBuilder.Entity("MVC_Project.Models.Instructor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -109,7 +112,8 @@ namespace MVC_Project.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
@@ -123,7 +127,8 @@ namespace MVC_Project.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Salary")
                         .HasColumnType("decimal(18,2)");
@@ -134,7 +139,7 @@ namespace MVC_Project.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Instractors");
+                    b.ToTable("Instructors");
                 });
 
             modelBuilder.Entity("MVC_Project.Models.Student", b =>
@@ -147,7 +152,8 @@ namespace MVC_Project.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
@@ -157,7 +163,8 @@ namespace MVC_Project.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -196,7 +203,7 @@ namespace MVC_Project.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("MVC_Project.Models.Instractor", b =>
+            modelBuilder.Entity("MVC_Project.Models.Instructor", b =>
                 {
                     b.HasOne("MVC_Project.Models.Course", "Course")
                         .WithMany()
